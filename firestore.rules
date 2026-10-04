@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Faqat users/{uid}.role == "admin" bo'lgan akkaunt panelga kira oladi.
+    // Python worker/bot Admin SDK ishlatadi — qoidalarni chetlab o'tadi.
+    function isAdmin() {
+      return request.auth != null
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function bootstrapDone() {
+      return exists(/databases/$(database)/documents/system/bootstrap)
+        && get(/databases/$(database)/documents/system/bootstrap).data.adminCreated == true;
+    }
+
+    // BIR MARTALIK BOOTSTRAP: hali birorta ham admin yaratilmagan bo'lsa,
+    // tizimga kirgan birinchi kishi o'zini admin qilib yaratishi mumkin
+    // (AuthContext.jsx'dagi tranzaksiya). Shundan keyin bu yo'l yopiladi —
+    // keyingi foydalanuvchilarni FAQAT mavjud admin qo'sha oladi.
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow create: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.data.role == 'admin'
+        && !bootstrapDone();
+      allow update, delete: if isAdmin();
+    }
+
+    match /system/bootstrap {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && !bootstrapDone()
+        && request.resource.data.adminCreated == true
+        && request.resource.data.createdBy == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // Shifrlangan login/parol/cookie — brauzerdan o'qib bo'lmaydi
+    // (panel faqat o'quvchi o'chirilganda hujjatni o'chiradi)
+    match /emaktab_creds/{id} {
+      allow read, create, update: if false;
+      allow delete: if isAdmin();
+    }
+
+    // Qolgan hamma narsa — faqat admin
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+  }
+}

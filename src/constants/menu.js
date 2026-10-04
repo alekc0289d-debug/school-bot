@@ -1,0 +1,77 @@
+import {
+  LayoutDashboard,
+  Users,
+  ClipboardList,
+  ShieldAlert,
+  RefreshCw,
+  Trophy,
+  Settings,
+  Calendar,
+  Megaphone,
+} from 'lucide-react';
+
+export const MENU_ITEMS = [
+  {
+    path: '/dashboard',
+    label: 'Dashboard',
+    icon: LayoutDashboard,
+    emoji: '📊',
+    roles: ['admin'],
+  },
+  {
+    path: '/students',
+    label: "O'quvchilar",
+    icon: Users,
+    emoji: '👥',
+    roles: ['admin'],
+  },
+  {
+    path: '/grades',
+    label: 'Baholar',
+    icon: ClipboardList,
+    emoji: '📝',
+    roles: ['admin'],
+  },
+  {
+    path: '/schedule',
+    label: 'Jadval',
+    icon: Calendar,
+    emoji: '📅',
+    roles: ['admin'],
+  },
+  {
+    path: '/announcements',
+    label: "E'lonlar",
+    icon: Megaphone,
+    emoji: '📢',
+    roles: ['admin'],
+  },
+  {
+    path: '/captcha',
+    label: 'Captcha navbati',
+    icon: ShieldAlert,
+    emoji: '🛡️',
+    roles: ['admin'],
+  },
+  {
+    path: '/sync',
+    label: 'Sync tarixi',
+    icon: RefreshCw,
+    emoji: '🔄',
+    roles: ['admin'],
+  },
+  {
+    path: '/rating',
+    label: 'Reyting',
+    icon: Trophy,
+    emoji: '🏆',
+    roles: ['admin'],
+  },
+  {
+    path: '/settings',
+    label: 'Sozlamalar',
+    icon: Settings,
+    emoji: '⚙️',
+    roles: ['admin'],
+  },
+];
