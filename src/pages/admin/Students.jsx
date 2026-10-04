@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, memo } from 'react';
-import { Plus, Edit, Trash2, Eye, Search } from 'lucide-react';
+import { Plus, Edit, Trash2, Eye, Search, Bot, BotOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { usePageTitle } from '../../hooks/usePageTitle';
@@ -12,6 +12,18 @@ import Button from '../../components/ui/Button';
 import Modal from '../../components/ui/Modal';
 import Loader from '../../components/ui/Loader';
 import StudentForm from '../../components/forms/StudentForm';
+
+function ConnectionBadge({ connected }) {
+  return connected ? (
+    <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full">
+      <Bot size={12} /> Ulangan
+    </span>
+  ) : (
+    <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 bg-slate-100 text-slate-500 rounded-full">
+      <BotOff size={12} /> Ulanmagan
+    </span>
+  );
+}
 
 const StudentRow = memo(function StudentRow({ student, onEdit, onDelete }) {
   return (
@@ -36,6 +48,12 @@ const StudentRow = memo(function StudentRow({ student, onEdit, onDelete }) {
       </td>
       <td className="py-3 px-4 text-sm text-slate-600">
         {student.motherPhone || '—'}
+      </td>
+      <td className="py-3 px-4">
+        <ConnectionBadge connected={!!student.tgId} />
+      </td>
+      <td className="py-3 px-4">
+        <ConnectionBadge connected={!!student.parentTgId} />
       </td>
       <td className="py-3 px-4 text-sm text-slate-600">
         {student.gradesCount || 0} baho
@@ -74,6 +92,8 @@ export default function Students() {
   const [editing, setEditing] = useState(null);
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState('');
+  const [studentBotFilter, setStudentBotFilter] = useState('all');
+  const [parentBotFilter, setParentBotFilter] = useState('all');
   const debouncedSearch = useDebounce(search, 300);
 
   const load = async () => {
@@ -92,14 +112,29 @@ export default function Students() {
 
   // CLIENT-SIDE FILTER — tez
   const filtered = useMemo(() => {
-    if (!debouncedSearch) return students;
     const q = debouncedSearch.toLowerCase();
-    return students.filter((s) =>
-      s.fullName?.toLowerCase().includes(q) ||
-      s.phone?.toLowerCase().includes(q) ||
-      s.classId?.toLowerCase().includes(q)
-    );
-  }, [students, debouncedSearch]);
+    return students.filter((s) => {
+      if (q) {
+        const matches =
+          s.fullName?.toLowerCase().includes(q) ||
+          s.phone?.toLowerCase().includes(q) ||
+          s.classId?.toLowerCase().includes(q);
+        if (!matches) return false;
+      }
+      if (studentBotFilter === 'connected' && !s.tgId) return false;
+      if (studentBotFilter === 'not_connected' && s.tgId) return false;
+      if (parentBotFilter === 'connected' && !s.parentTgId) return false;
+      if (parentBotFilter === 'not_connected' && s.parentTgId) return false;
+      return true;
+    });
+  }, [students, debouncedSearch, studentBotFilter, parentBotFilter]);
+
+  const studentConnectedCount = useMemo(
+    () => students.filter((s) => s.tgId).length, [students]
+  );
+  const parentConnectedCount = useMemo(
+    () => students.filter((s) => s.parentTgId).length, [students]
+  );
 
   const handleSave = async (data) => {
     setSaving(true);
@@ -141,6 +176,12 @@ export default function Students() {
           </h1>
           <p className="text-slate-500 text-sm mt-1">
             Jami: <strong className="text-slate-700">{students.length}</strong> ta
+            {' · '}
+            <Bot size={13} className="inline -mt-0.5 text-emerald-600" />{' '}
+            <strong className="text-slate-700">{studentConnectedCount}</strong> o'quvchi
+            {' · '}
+            <Bot size={13} className="inline -mt-0.5 text-emerald-600" />{' '}
+            <strong className="text-slate-700">{parentConnectedCount}</strong> ota-ona ulangan
           </p>
         </div>
         <Button onClick={() => { setEditing(null); setModalOpen(true); }}>
@@ -148,18 +189,38 @@ export default function Students() {
         </Button>
       </div>
 
-      <div className="relative">
-        <Search
-          size={18}
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-        />
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Ism, sinf yoki telefon bo'yicha qidirish..."
-          className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition shadow-soft"
-        />
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative flex-1">
+          <Search
+            size={18}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+          />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Ism, sinf yoki telefon bo'yicha qidirish..."
+            className="w-full pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition shadow-soft"
+          />
+        </div>
+        <select
+          value={studentBotFilter}
+          onChange={(e) => setStudentBotFilter(e.target.value)}
+          className="px-3 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition shadow-soft"
+        >
+          <option value="all">O'quvchi bot: hammasi</option>
+          <option value="connected">O'quvchi bot: ulangan</option>
+          <option value="not_connected">O'quvchi bot: ulanmagan</option>
+        </select>
+        <select
+          value={parentBotFilter}
+          onChange={(e) => setParentBotFilter(e.target.value)}
+          className="px-3 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition shadow-soft"
+        >
+          <option value="all">Ota-ona bot: hammasi</option>
+          <option value="connected">Ota-ona bot: ulangan</option>
+          <option value="not_connected">Ota-ona bot: ulanmagan</option>
+        </select>
       </div>
 
       <Card>
@@ -169,7 +230,9 @@ export default function Students() {
           <div className="p-12 text-center">
             <div className="text-5xl mb-3">📭</div>
             <p className="text-slate-500 text-sm font-medium">
-              {search ? 'Hech narsa topilmadi' : "O'quvchilar yo'q"}
+              {search || studentBotFilter !== 'all' || parentBotFilter !== 'all'
+                ? 'Hech narsa topilmadi'
+                : "O'quvchilar yo'q"}
             </p>
           </div>
         ) : (
@@ -177,7 +240,10 @@ export default function Students() {
             <table className="w-full">
               <thead>
                 <tr className="bg-slate-50/80">
-                  {["O'quvchi", 'Sinf', 'Ona telefoni', 'Baholar', 'Amallar'].map((h) => (
+                  {[
+                    "O'quvchi", 'Sinf', 'Ona telefoni',
+                    "O'quvchi bot", 'Ota-ona bot', 'Baholar', 'Amallar',
+                  ].map((h) => (
                     <th
                       key={h}
                       className="text-left py-3 px-4 text-[11px] font-bold text-slate-500 uppercase tracking-wider first:rounded-l-lg last:rounded-r-lg"
