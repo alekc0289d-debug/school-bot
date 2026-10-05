@@ -13,7 +13,14 @@ import Modal from '../../components/ui/Modal';
 import Loader from '../../components/ui/Loader';
 import StudentForm from '../../components/forms/StudentForm';
 
-function ConnectionBadge({ connected }) {
+function ConnectionBadge({ connected, blocked }) {
+  if (connected && blocked) {
+    return (
+      <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 bg-red-50 text-red-700 rounded-full">
+        <BotOff size={12} /> Bloklangan
+      </span>
+    );
+  }
   return connected ? (
     <span className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full">
       <Bot size={12} /> Ulangan
@@ -50,10 +57,10 @@ const StudentRow = memo(function StudentRow({ student, onEdit, onDelete }) {
         {student.motherPhone || '—'}
       </td>
       <td className="py-3 px-4">
-        <ConnectionBadge connected={!!student.tgId} />
+        <ConnectionBadge connected={!!student.tgId} blocked={!!student.botBlocked} />
       </td>
       <td className="py-3 px-4">
-        <ConnectionBadge connected={!!student.parentTgId} />
+        <ConnectionBadge connected={!!student.parentTgId} blocked={!!student.parentBotBlocked} />
       </td>
       <td className="py-3 px-4 text-sm text-slate-600">
         {student.gradesCount || 0} baho
@@ -121,19 +128,25 @@ export default function Students() {
           s.classId?.toLowerCase().includes(q);
         if (!matches) return false;
       }
-      if (studentBotFilter === 'connected' && !s.tgId) return false;
-      if (studentBotFilter === 'not_connected' && s.tgId) return false;
-      if (parentBotFilter === 'connected' && !s.parentTgId) return false;
-      if (parentBotFilter === 'not_connected' && s.parentTgId) return false;
+      const studentState = !s.tgId ? 'not_connected' : s.botBlocked ? 'blocked' : 'connected';
+      const parentState = !s.parentTgId ? 'not_connected' : s.parentBotBlocked ? 'blocked' : 'connected';
+      if (studentBotFilter !== 'all' && studentState !== studentBotFilter) return false;
+      if (parentBotFilter !== 'all' && parentState !== parentBotFilter) return false;
       return true;
     });
   }, [students, debouncedSearch, studentBotFilter, parentBotFilter]);
 
   const studentConnectedCount = useMemo(
-    () => students.filter((s) => s.tgId).length, [students]
+    () => students.filter((s) => s.tgId && !s.botBlocked).length, [students]
   );
   const parentConnectedCount = useMemo(
-    () => students.filter((s) => s.parentTgId).length, [students]
+    () => students.filter((s) => s.parentTgId && !s.parentBotBlocked).length, [students]
+  );
+  const studentBlockedCount = useMemo(
+    () => students.filter((s) => s.tgId && s.botBlocked).length, [students]
+  );
+  const parentBlockedCount = useMemo(
+    () => students.filter((s) => s.parentTgId && s.parentBotBlocked).length, [students]
   );
 
   const handleSave = async (data) => {
@@ -178,10 +191,15 @@ export default function Students() {
             Jami: <strong className="text-slate-700">{students.length}</strong> ta
             {' · '}
             <Bot size={13} className="inline -mt-0.5 text-emerald-600" />{' '}
-            <strong className="text-slate-700">{studentConnectedCount}</strong> o'quvchi
-            {' · '}
-            <Bot size={13} className="inline -mt-0.5 text-emerald-600" />{' '}
+            <strong className="text-slate-700">{studentConnectedCount}</strong> o'quvchi /{' '}
             <strong className="text-slate-700">{parentConnectedCount}</strong> ota-ona ulangan
+            {(studentBlockedCount > 0 || parentBlockedCount > 0) && (
+              <>
+                {' · '}
+                <BotOff size={13} className="inline -mt-0.5 text-red-600" />{' '}
+                <strong className="text-red-600">{studentBlockedCount + parentBlockedCount}</strong> bloklagan
+              </>
+            )}
           </p>
         </div>
         <Button onClick={() => { setEditing(null); setModalOpen(true); }}>
@@ -210,6 +228,7 @@ export default function Students() {
         >
           <option value="all">O'quvchi bot: hammasi</option>
           <option value="connected">O'quvchi bot: ulangan</option>
+          <option value="blocked">O'quvchi bot: bloklagan</option>
           <option value="not_connected">O'quvchi bot: ulanmagan</option>
         </select>
         <select
@@ -219,6 +238,7 @@ export default function Students() {
         >
           <option value="all">Ota-ona bot: hammasi</option>
           <option value="connected">Ota-ona bot: ulangan</option>
+          <option value="blocked">Ota-ona bot: bloklagan</option>
           <option value="not_connected">Ota-ona bot: ulanmagan</option>
         </select>
       </div>
