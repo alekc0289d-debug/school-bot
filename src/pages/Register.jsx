@@ -7,7 +7,28 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Card from '../components/ui/Card';
 
-const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
+// VITE_API_URL protokolsiz (masalan "api.example.com") kiritilsa, brauzer uni
+// nisbiy yo'l deb hisoblaydi va so'rov Netlify saytining o'ziga ketadi (index.html
+// qaytadi -> "Unexpected token '<'" xatosi). Shuning uchun https:// qo'shamiz.
+function normalizeApiUrl(raw) {
+  let url = (raw || 'http://localhost:8000').trim().replace(/^["']|["']$/g, '');
+  if (!/^https?:\/\//i.test(url)) url = `https://${url.replace(/^\/+/, '')}`;
+  return url.replace(/\/+$/, '');
+}
+
+const API_URL = normalizeApiUrl(import.meta.env.VITE_API_URL);
+
+// JSON bo'lmagan javoblarda (HTML xato sahifasi va h.k.) tushunarli xabar beradi
+async function readJson(res) {
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    throw new Error(
+      `Server noto'g'ri javob qaytardi (${res.status}). API manzilini tekshiring.`
+    );
+  }
+}
 
 export default function Register() {
   usePageTitle("Ro'yxatdan o'tish");
@@ -56,7 +77,7 @@ export default function Register() {
           stop("Jarayon topilmadi (server qayta ishga tushgan bo'lishi mumkin). Qayta urinib ko'ring.");
           return;
         }
-        const data = await res.json();
+        const data = await readJson(res);
         failures = 0;
         setStatus(data);
 
@@ -105,7 +126,7 @@ export default function Register() {
         body: JSON.stringify({ ...form, consent }),
       });
 
-      const data = await res.json();
+      const data = await readJson(res);
 
       if (!res.ok) {
         throw new Error(data.detail || 'Xatolik');
