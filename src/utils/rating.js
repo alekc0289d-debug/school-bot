@@ -13,14 +13,6 @@ function toPercentScore(g) {
   return s;
 }
 
-/**
- * Yangi kompleks reyting formulasi:
- * 1) Kunlik baholar o'rtachasi * 10 (max 100)
- * 2) BSB o'rtacha % * 0.5 (max 50)
- * 3) CHSB o'rtacha % * 0.7 (max 70)
- * 4) Topshiriqlar (Quests) ballari yig'indisi
- * 5) Testlar (Quizzes) bo'yicha eng yaxshi ballar yig'indisi
- */
 export function calculateStudentRating(
   studentId,
   allGrades = [],
