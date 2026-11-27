@@ -5,13 +5,13 @@ const FLAKES = ['❄️', '❅', '❆', '•'];
 export default function Snowfall({ enabled = true }) {
   const particles = useMemo(
     () =>
-      Array.from({ length: 24 }, (_, i) => ({
+      Array.from({ length: 26 }, (_, i) => ({
         id: i,
-        left: `${(i * 4.2 + (i % 3) * 1.7) % 100}%`,
-        size: 10 + (i % 5) * 3,
-        duration: `${10 + (i % 7) * 2.3}s`,
-        delay: `${-((i * 1.3) % 12)}s`,
-        drift: `${(i % 2 === 0 ? 1 : -1) * (15 + (i % 4) * 10)}px`,
+        left: `${(i * 3.9 + (i % 4) * 1.4) % 100}%`,
+        size: 11 + (i % 5) * 3,
+        duration: `${9 + (i % 7) * 2.1}s`,
+        delay: `${-((i * 1.4) % 12)}s`,
+        drift: `${(i % 2 === 0 ? 1 : -1) * (16 + (i % 4) * 11)}px`,
         symbol: FLAKES[i % FLAKES.length],
         opacity: 0.35 + (i % 4) * 0.14,
       })),
