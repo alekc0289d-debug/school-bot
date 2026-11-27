@@ -23,7 +23,7 @@ export default function Header({ setSidebarOpen }) {
   };
 
   return (
-    <header className="glass border-b border-sky-200/70 sticky top-0 z-30">
+    <header className="glass border-b border-sky-200/80 sticky top-0 z-30">
       <div className="flex items-center justify-between px-4 lg:px-6 py-3">
         <div className="flex items-center gap-3">
           <button
@@ -32,11 +32,11 @@ export default function Header({ setSidebarOpen }) {
           >
             <Menu size={20} />
           </button>
-          <div className="hidden md:flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-2.5">
             <h2 className="text-sm font-bold text-slate-700">
               Maktab Boshqaruv Tizimi
             </h2>
-            <span className="text-[11px] px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 font-semibold">
+            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-gradient-to-r from-sky-100 to-indigo-100 text-sky-700 font-semibold border border-sky-200/70">
               ❄️ Qishki mavsum
             </span>
           </div>
@@ -45,7 +45,7 @@ export default function Header({ setSidebarOpen }) {
         <div className="flex items-center gap-2">
           <button
             onClick={toggleSnow}
-            title={snow ? "Qorni o'chirish" : "Qorni yoqish"}
+            title={snow ? "Qorni o'chirish" : 'Qorni yoqish'}
             className={`p-2 rounded-lg transition ${
               snow
                 ? 'bg-sky-100 text-sky-600 hover:bg-sky-200'
@@ -82,7 +82,7 @@ export default function Header({ setSidebarOpen }) {
                   className="fixed inset-0 z-10"
                   onClick={() => setShowProfile(false)}
                 />
-                <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-sky-100 py-1 z-20 animate-slide-up">
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-sky-100 py-1 z-20 anim-pop">
                   <div className="px-4 py-3 border-b border-slate-100">
                     <p className="text-sm font-semibold text-slate-800 truncate">
                       {user?.email}
@@ -94,4 +94,16 @@ export default function Header({ setSidebarOpen }) {
                   </button>
                   <button
                     onClick={logout}
-                    className="w-full flex items
+                    className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition"
+                  >
+                    <LogOut size={15} /> Chiqish
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
