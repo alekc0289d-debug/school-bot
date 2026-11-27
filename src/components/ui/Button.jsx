@@ -9,9 +9,9 @@ export default function Button({
 
   const variants = {
     primary:
-      'bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-blue-600/30 active:scale-[0.98]',
+      'bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 text-white hover:shadow-lg hover:shadow-sky-500/30 active:scale-[0.98]',
     secondary:
-      'bg-slate-100 text-slate-700 hover:bg-slate-200 active:scale-[0.98]',
+      'bg-sky-50 text-slate-700 border border-sky-200/70 hover:bg-sky-100 active:scale-[0.98]',
     danger:
       'bg-gradient-to-r from-red-600 to-rose-600 text-white hover:shadow-lg hover:shadow-red-600/30 active:scale-[0.98]',
   };
