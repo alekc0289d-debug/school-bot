@@ -29,21 +29,26 @@ function PageLoader() {
 
 function NoAccess({ onLogout }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sky-50 via-blue-50 to-indigo-100 p-4">
-      <div className="frost-card rounded-2xl p-8 max-w-md text-center animate-fade-in">
-        <div className="w-16 h-16 rounded-2xl bg-sky-100 flex items-center justify-center text-3xl mx-auto mb-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="frost-card rounded-2xl p-8 max-w-md text-center anim-pop">
+        <div className="w-16 h-16 rounded-2xl bg-sky-100 flex items-center justify-center text-3xl mx-auto mb-4 animate-float-slow">
           ❄️
         </div>
         <h1 className="text-xl font-bold text-slate-800 mb-2">Ruxsat yo'q</h1>
         <p className="text-slate-500 text-sm mb-6 leading-relaxed">
           Bu akkaunt administrator emas. Firestore'da{' '}
-          <code className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">users/&#123;uid&#125;</code>{' '}
-          hujjatida <code className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">role: "admin"</code>{' '}
+          <code className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">
+            users/&#123;uid&#125;
+          </code>{' '}
+          hujjatida{' '}
+          <code className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-600">
+            role: "admin"
+          </code>{' '}
           bo'lishi kerak.
         </p>
         <button
           onClick={onLogout}
-          className="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
+          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 text-white font-semibold hover:shadow-lg transition"
         >
           Chiqish
         </button>
@@ -57,10 +62,10 @@ const ProtectedRoute = memo(function ProtectedRoute({ children }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-sky-50">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-sky-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-slate-500 text-sm">Yuklanmoqda...</p>
+          <p className="text-slate-500 text-sm font-medium">❄️ Yuklanmoqda...</p>
         </div>
       </div>
     );
