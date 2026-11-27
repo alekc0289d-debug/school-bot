@@ -7,111 +7,92 @@ export default function Terms() {
   usePageTitle('Foydalanish shartlari');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center p-4">
-      <div className="w-full max-w-3xl">
+    <div className="min-h-screen winter-aurora flex items-center justify-center p-4 py-8">
+      <div className="w-full max-w-3xl animate-slide-up">
         <Link
           to="/register"
-          className="inline-flex items-center gap-2 text-white mb-4 hover:underline"
+          className="inline-flex items-center gap-2 text-white mb-4 hover:underline text-sm font-medium"
         >
           <ArrowLeft size={16} /> Orqaga
         </Link>
 
         <Card className="p-8">
-          <div className="text-center mb-6">
-            <div className="text-5xl mb-3">📋</div>
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">
-              Foydalanish shartlari
+          <div className="text-center mb-6 anim-stagger-1">
+            <div className="text-5xl mb-3 animate-float-slow">❄️📋</div>
+            <h1 className="text-2xl font-extrabold text-slate-800 mb-1">
+              Foydalanish shartlari va Oylik to'lov
             </h1>
-            <p className="text-gray-500 text-sm">Maktab Boshqaruv Tizimi</p>
+            <p className="text-slate-500 text-sm">
+              Maktab Boshqaruv Tizimi · 9-A sinf
+            </p>
           </div>
 
-          <div className="prose prose-slate max-w-none space-y-4 text-sm text-slate-700">
+          <div className="space-y-4 text-sm text-slate-700 leading-relaxed anim-stagger-2">
             <section>
-              <h2 className="text-base font-bold text-slate-800 mb-2">
+              <h2 className="text-base font-bold text-slate-800 mb-1.5">
                 1. Umumiy ma'lumot
               </h2>
               <p>
                 Ushbu tizim <strong>9-A sinf</strong> o'quvchilari va ularning
-                ota-onalari uchun mo'ljallangan. Tizimga ro'yxatdan o'tish orqali
-                siz quyidagi shartlarga rozilik bildirasiz.
+                ota-onalari uchun mo'ljallangan. Ro'yxatdan o'tish orqali siz
+                quyidagi shartlarga rozilik bildirasiz.
               </p>
             </section>
 
             <section>
-              <h2 className="text-base font-bold text-slate-800 mb-2">
+              <h2 className="text-base font-bold text-slate-800 mb-1.5">
                 2. Ma'lumotlar yig'ilishi
               </h2>
-              <p>
-                Tizim sizning <strong>eMaktab login va parolingizni</strong> qabul
-                qiladi va ular orqali:
+              <ul className="list-disc pl-6 space-y-1">
+                <li>O'quvchi ismi, familiyasi va jinsi (familiya oxiriga qarab)</li>
+                <li>eMaktab'dagi kunlik, BSB va CHSB baholari hamda dars jadvali</li>
+                <li>Botdagi testlar, topshiriqlar va guruh viktorinasi ballari</li>
+              </ul>
+            </section>
+
+            <section className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+              <h2 className="text-base font-bold text-amber-900 mb-1.5">
+                3. Oylik to'lov — 2 000 so'm va Pul mukofoti fondi
+              </h2>
+              <p className="text-amber-900/90">
+                Platformaning 24/7 ishlashi hamda o'quvchilarni rag'batlantirish uchun
+                har bir o'quvchidan oyiga <strong>2 000 so'm</strong> miqdorida to'lov olinadi:
               </p>
-              <ul className="list-disc pl-6 space-y-1 mt-2">
-                <li>O'quvchi ismi va familiyasini oladi</li>
-                <li>Sinf ma'lumotlarini oladi</li>
-                <li>Baholarni avtomatik yangilaydi</li>
-                <li>Dars jadvalini oladi</li>
+              <ul className="list-disc pl-6 space-y-1 mt-2 text-amber-900/90">
+                <li>
+                  <strong>Server va AI xarajatlari:</strong> Railway, Firebase va Groq AI o'qituvchi xizmati.
+                </li>
+                <li>
+                  <strong>Pul mukofoti jamg'armasi:</strong> Oy oxirida reyting g'olibiga{' '}
+                  <strong>Pul mukofoti 💰</strong> beriladi.
+                </li>
+                <li>
+                  <strong>Ixtiyoriylik:</strong> To'lov shartiga o'z roziligingiz bilan qo'shilasiz,
+                  xohlagan vaqtda tizimdan chiqishingiz mumkin.
+                </li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-base font-bold text-slate-800 mb-2">
-                3. Xavfsizlik
+              <h2 className="text-base font-bold text-slate-800 mb-1.5">
+                4. Xavfsizlik
               </h2>
               <ul className="list-disc pl-6 space-y-1">
                 <li>
-                  Login-parolingiz <strong>AES-256</strong> bilan shifrlanadi
+                  eMaktab login-parolingiz <strong>AES-256</strong> bilan shifrlanadi.
                 </li>
-                <li>Ma'lumotlar <strong>Firebase Firestore</strong>da xavfsiz saqlanadi</li>
-                <li>Uchinchi shaxslarga ma'lumot <strong>berilmaydi</strong></li>
-                <li>Siz istalgan vaqtda ma'lumotlaringizni <strong>o'chirishni</strong> so'rashingiz mumkin</li>
+                <li>Uchinchi shaxslarga hech qanday ma'lumot berilmaydi.</li>
+                <li>
+                  Favqulodda holatlarda administrator faqat sabab ko'rsatgan holda
+                  (audit log orqali) kirish ma'lumotini ko'rishi mumkin.
+                </li>
               </ul>
             </section>
 
-            <section>
-              <h2 className="text-base font-bold text-slate-800 mb-2">
-                4. Avtomatik kirish
-              </h2>
-              <p>
-                Tizim sizning hisobingiz orqali <strong>eMaktab.uz</strong> saytiga
-                avtomatik kiradi. Bu:
-              </p>
-              <ul className="list-disc pl-6 space-y-1 mt-2">
-                <li>Faqat ma'lumot olish uchun</li>
-                <li>Hech qanday o'zgartirish kiritilmaydi</li>
-                <li>eMaktab qoidalariga rioya qilinadi</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-base font-bold text-slate-800 mb-2">
-                5. Sizning huquqlaringiz
-              </h2>
-              <ul className="list-disc pl-6 space-y-1">
-                <li>Ma'lumotlaringizni <strong>ko'rish</strong></li>
-                <li>Ma'lumotlaringizni <strong>o'chirish</strong>ni so'rash</li>
-                <li>Telefon raqamlarni <strong>o'zgartirish</strong></li>
-                <li>Tizimdan <strong>chiqish</strong></li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="text-base font-bold text-slate-800 mb-2">
-                6. Ota-onalar uchun
-              </h2>
-              <p>
-                Ota-ona telefon raqamini kiritish orqali:
-              </p>
-              <ul className="list-disc pl-6 space-y-1 mt-2">
-                <li>Farzandning baholari haqida xabar oladi</li>
-                <li>Sinf e'lonlarini oladi</li>
-                <li>Reytingda qatnashadi</li>
-              </ul>
-            </section>
-
-            <div className="bg-emerald-50 border border-emerald-100 rounded-lg p-4 mt-6">
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
               <p className="text-sm text-emerald-800">
-                <strong>✅ Rozilik:</strong> Tizimga ro'yxatdan o'tish orqali siz
-                yuqoridagi barcha shartlarga rozilik bildirasiz.
+                <strong>✅ Rozilik:</strong> Ro'yxatdan o'tish orqali siz barcha shartlarga
+                va oylik <strong>2 000 so'm</strong> to'lovga to'liq rozilik bildirasiz.
               </p>
             </div>
           </div>
@@ -119,7 +100,7 @@ export default function Terms() {
           <div className="mt-6 flex justify-center">
             <Link
               to="/register"
-              className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition"
+              className="btn-ice-shimmer px-6 py-2.5 bg-gradient-to-r from-sky-500 to-blue-600 text-white rounded-xl font-semibold hover:shadow-lg transition"
             >
               Tushundim, orqaga
             </Link>
