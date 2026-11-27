@@ -7,8 +7,8 @@ export default function Input({ label, error, className = '', ...props }) {
         </label>
       )}
       <input
-        className={`w-full px-4 py-2.5 border rounded-xl bg-white text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition placeholder:text-slate-400 ${
-          error ? 'border-red-300 bg-red-50/30' : 'border-slate-200'
+        className={`w-full px-4 py-2.5 border rounded-xl bg-white text-sm focus:ring-2 focus:ring-sky-500/25 focus:border-sky-500 outline-none transition placeholder:text-slate-400 ${
+          error ? 'border-red-300 bg-red-50/30' : 'border-sky-200'
         } ${className}`}
         {...props}
       />
