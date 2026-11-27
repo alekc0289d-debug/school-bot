@@ -1,77 +1,66 @@
-import { NavLink } from 'react-router-dom';
-import { X, Snowflake } from 'lucide-react';
-import { MENU_ITEMS } from '../../constants/menu';
-import { useAuth } from '../../contexts/AuthContext';
+import { Component, Suspense, useState } from 'react';
+import { Outlet } from 'react-router-dom';
+import Sidebar from './Sidebar';
+import Header from './Header';
 
-export default function Sidebar({ open, setOpen }) {
-  const { role } = useAuth();
-  const filtered = MENU_ITEMS.filter((i) => i.roles.includes(role));
+class PageErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { error: null };
+  }
 
-  return (
-    <>
-      {open && (
-        <div
-          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 lg:hidden animate-fade-in"
-          onClick={() => setOpen(false)}
-        />
-      )}
+  static getDerivedStateFromError(error) {
+    return { error };
+  }
 
-      <aside
-        className={`
-          fixed lg:static top-0 left-0 z-50
-          w-64 h-screen bg-gradient-to-b from-slate-900 via-sky-950 to-slate-950 text-white
-          flex flex-col transform transition-transform duration-300 border-r border-sky-900/40
-          ${open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-        `}
-      >
-        <div className="flex items-center justify-between p-5 border-b border-sky-800/40">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-sky-400 to-blue-600 rounded-xl flex items-center justify-center text-xl shadow-lg shadow-sky-500/25">
-              ❄️
-            </div>
-            <div>
-              <h1 className="font-bold text-base leading-tight flex items-center gap-1.5">
-                Maktab <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 font-semibold">Qish</span>
-              </h1>
-              <p className="text-[11px] text-sky-300/70">9-A sinf · 2026</p>
-            </div>
-          </div>
+  render() {
+    if (this.state.error) {
+      return (
+        <div className="frost-card rounded-2xl p-6 border border-red-200 bg-red-50/90 text-red-900">
+          <h2 className="text-lg font-bold mb-2">⚠️ Sahifada xatolik yuz berdi</h2>
+          <p className="text-sm font-mono bg-white p-3 rounded-xl border border-red-200 break-all">
+            {this.state.error?.message || String(this.state.error)}
+          </p>
           <button
-            onClick={() => setOpen(false)}
-            className="lg:hidden text-slate-400 hover:text-white p-1.5 hover:bg-slate-800 rounded-lg transition"
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 rounded-xl bg-red-600 text-white text-sm font-semibold hover:bg-red-700"
           >
-            <X size={18} />
+            Sahifani yangilash
           </button>
         </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
-        <nav className="flex-1 overflow-y-auto py-4 px-3">
-          {filtered.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              onClick={() => setOpen(false)}
-              className={({ isActive }) =>
-                `group flex items-center gap-3 px-3 py-2.5 rounded-xl mb-1 transition-all ${
-                  isActive
-                    ? 'bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-lg shadow-sky-500/25'
-                    : 'text-slate-300 hover:bg-sky-900/40 hover:text-white'
-                }`
-              }
-            >
-              <item.icon size={18} className="flex-shrink-0" />
-              <span className="text-sm font-medium flex-1">{item.label}</span>
-              <span className="text-base opacity-50 group-hover:opacity-90 transition">
-                {item.emoji}
-              </span>
-            </NavLink>
-          ))}
-        </nav>
+export default function Layout() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-        <div className="p-4 border-t border-sky-900/40 text-[11px] text-sky-300/60 flex items-center justify-between">
-          <span>© 2026 Maktab Tizimi</span>
-          <Snowflake size={14} className="text-sky-400 animate-pulse" />
-        </div>
-      </aside>
-    </>
+  return (
+    <div className="flex h-screen">
+      <Sidebar open={sidebarOpen} setOpen={setSidebarOpen} />
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+        <PageErrorBoundary>
+          <Header setSidebarOpen={setSidebarOpen} />
+        </PageErrorBoundary>
+        <main className="flex-1 overflow-y-auto p-4 lg:p-6 animate-fade-in">
+          <div className="max-w-7xl mx-auto">
+            <PageErrorBoundary>
+              <Suspense
+                fallback={
+                  <div className="flex flex-col items-center justify-center py-20">
+                    <div className="w-12 h-12 border-4 border-sky-500 border-t-transparent rounded-full animate-spin mb-3" />
+                    <p className="text-slate-500 text-sm font-medium">❄️ Yuklanmoqda...</p>
+                  </div>
+                }
+              >
+                <Outlet />
+              </Suspense>
+            </PageErrorBoundary>
+          </div>
+        </main>
+      </div>
+    </div>
   );
 }
